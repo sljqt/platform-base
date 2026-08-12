@@ -1,0 +1,23 @@
+#!/command/with-contenv bash
+
+
+cd "${HOME}"
+
+echo "INFO: starting code-server..."
+
+exec 2>&1
+
+
+export VSCODE_SERVER_HOME="/root/develop/vscode-server"
+
+
+exec /usr/bin/code-server \
+    --bind-addr 0.0.0.0:8889 \
+    --disable-telemetry \
+    --disable-update-check \
+    --disable-workspace-trust \
+    --disable-getting-started-override \
+    --auth none \
+    --user-data-dir /root/develop/vscode-config \
+    --extensions-dir /root/develop/vscode-extensions \
+    "${HOME}"

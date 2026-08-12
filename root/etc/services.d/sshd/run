@@ -1,0 +1,10 @@
+#!/command/with-contenv bash
+
+
+mkdir -p /run/sshd
+
+
+echo "INFO: starting sshd"
+
+
+exec /usr/sbin/sshd -D

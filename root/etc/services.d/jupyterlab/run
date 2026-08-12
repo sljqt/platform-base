@@ -1,0 +1,28 @@
+#!/command/with-contenv bash
+
+
+export JUPYTER_RUNTIME_DIR="/tmp/jupyter_runtime"
+
+export JUPYTER_CONFIG_DIR=/root/develop/jupyter-config
+
+export JUPYTER_DATA_DIR=/root/develop/jupyter-data
+
+
+cd "${HOME}"
+
+
+echo "INFO: starting jupyter..."
+
+
+exec 2>&1
+
+
+exec jupyter lab \
+    --ip=0.0.0.0 \
+    --no-browser \
+    --allow-root \
+    --port=8888 \
+    --ServerApp.token="" \
+    --ServerApp.password="" \
+    --ServerApp.allow_origin="*" \
+    --ServerApp.allow_remote_access=True
