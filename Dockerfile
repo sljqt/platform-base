@@ -91,6 +91,10 @@ RUN mkdir /run/sshd
 
 COPY root/etc/services.d /etc/services.d
 
+RUN find /etc/services.d -type f -name run -exec sed -i 's/\r$//' {} \; \
+    && find /etc/services.d -type f -name run -exec chmod +x {} \;
+
+
 
 WORKDIR /root/develop
 # s6入口
