@@ -1,15 +1,10 @@
-FROM ubuntu:22.04
+FROM qwen-image-edit-2511:v1
 
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/root
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
-
-
-# -------------------------
-# 基础工具
-# -------------------------
 
 RUN apt update && apt install -y \
     curl \
@@ -24,13 +19,9 @@ RUN apt update && apt install -y \
     vim \
     tmux \
     htop \
+    nano \
+    iputils-ping \
     && rm -rf /var/lib/apt/lists/*
-
-
-
-# -------------------------
-# s6-overlay
-# -------------------------
 
 ARG S6_OVERLAY_VERSION=3.2.0.0
 
@@ -41,33 +32,16 @@ RUN ARCH=$(uname -m) && \
     && tar -C / -Jxpf /tmp/s6-overlay.tar.gz \
     && rm /tmp/s6-overlay.tar.gz
 
-
 RUN wget -O /tmp/s6-overlay-x86.tar.gz \
     https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz \
     && tar -C / -Jxpf /tmp/s6-overlay-x86.tar.gz \
     && rm /tmp/s6-overlay-x86.tar.gz
 
-
-
-# -------------------------
-# code-server
-# -------------------------
-
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
-
-# -------------------------
-# Jupyter
-# -------------------------
-
 RUN pip3 install \
+    --break-system-packages \
     jupyterlab
-
-
-
-# -------------------------
-# workspace
-# -------------------------
 
 RUN mkdir -p \
     /root/develop/vscode-config \
@@ -76,27 +50,13 @@ RUN mkdir -p \
     /root/develop/jupyter-config \
     /root/develop/jupyter-data
 
-
-
-# -------------------------
-# ssh
-# -------------------------
-
 RUN mkdir /run/sshd
-
-
-# -------------------------
-# s6 services
-# -------------------------
 
 COPY root/etc/services.d /etc/services.d
 
 RUN find /etc/services.d -type f -name run -exec sed -i 's/\r$//' {} \; \
     && find /etc/services.d -type f -name run -exec chmod +x {} \;
 
-
-
 WORKDIR /root/develop
-# s6入口
 
 ENTRYPOINT ["/init"]
